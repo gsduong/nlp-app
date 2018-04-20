@@ -1,0 +1,9 @@
+section.content {
+    margin: 10px;
+    margin-left: 300px;
+}
+section > .sidebar {
+	position: fixed;
+	top: 10px;
+	height: calc(100vh - 20px);
+}
