@@ -58,8 +58,13 @@ class IntentController extends Controller
     		$original_text = trim($request->document);
             $tokenized_text = $this->tokenize($original_text);
             $text = $this->remove_stopwords($tokenized_text);
+            $text = $this->remove_number($text);
+            $text = $this->remove_punctuation($text);
+            if ($text == '') {
+                return "String remains nothing after removing stopwords";
+            }
     		$intent->documents()->firstOrCreate(['original_text' => $request->document, 'tokenized_text' => $tokenized_text, 'text' => $text]);
-            return redirect('intent/' . $intent_id);
+            return redirect('intent/' . $intent_id . '/add');
     	}
     	return "Intent not found";
     }
@@ -72,6 +77,11 @@ class IntentController extends Controller
                 $original_text = trim($request->document);
                 $tokenized_text = $this->tokenize($original_text);
                 $text = $this->remove_stopwords($tokenized_text);
+                $text = $this->remove_number($text);
+                $text = $this->remove_punctuation($text);
+                if ($text == '') {
+                    return "String remains nothing after removing stopwords";
+                }
                 $doc->update(['original_text' => $request->document, 'tokenized_text' => $tokenized_text, 'text' => $text]);
                 return redirect()->route('intent.edit.document', [$intent_id, $doc_id]);
             }
@@ -128,15 +138,31 @@ class IntentController extends Controller
         }
         return trim($result);
     }
-    public function test(){
-        $words = array();
-        if ($file = fopen("uploads/files/stopwords.txt", "r")) {
-            while(!feof($file)) {
-                $line = trim(fgets($file));
-                array_push($words, $line);
+    public function remove_number($string){
+        $tokens = explode(" ", $string);
+        $results = "";
+        foreach($tokens as $token) {
+            if (ctype_digit($token)) {
+                # code...
+                // nothing
             }
-            fclose($file);
+            else {
+                $results = $results . $token . " ";
+            }
         }
-        print_r(!in_array("đồ", $words));
+        return trim($results);
     }
+
+    public function remove_punctuation($string){
+        $punctuations = ["`", "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "+", "{", "}", "|", "\\", ":", ";", "\"", "'", ",", ".", "?", "/"];
+        $tokens = explode(" ", $string);
+        $results = "";
+        foreach($tokens as $token) {
+            if (!in_array($token, $punctuations)) {
+                $results = $results . $token . " ";
+            }
+        }
+        return trim($results);
+    }
+
 }

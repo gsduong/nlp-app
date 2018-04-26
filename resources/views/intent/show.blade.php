@@ -43,7 +43,7 @@
                                         <th>#</th>
                                         <th>Samples</th>
                                         <th>Tokenized Text</th>
-                                        <th>Text After Removing Stopwords</th>
+                                        <th>Text After Removing Stopwords, Numbers and Punctuations</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>

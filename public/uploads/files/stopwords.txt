@@ -230,6 +230,7 @@ chăng
 chăng_chắc
 chăng_nữa
 chơi
+dùm
 chơi_họ
 chưa
 chưa_bao_giờ
@@ -531,6 +532,13 @@ hay_biết
 hay_hay
 hay_không
 hay_là
+giúp
+cháu
+chú
+cô
+dì
+anh
+em
 hay_làm
 hay_nhỉ
 hay_nói
@@ -803,7 +811,6 @@ mở_nước
 mở_ra
 mợ
 mức
-nay
 ngay
 ngay_bây_giờ
 ngay_cả
@@ -847,7 +854,6 @@ ngoài_ra
 ngoài_xa
 ngoải
 nguồn
-ngày
 ngày_càng
 ngày_cấp
 ngày_giờ
@@ -868,7 +874,6 @@ ngôi_thứ
 ngõ_hầu
 ngăn_ngắt
 ngươi
-người
 người_hỏi
 người_khác
 người_khách
@@ -1381,7 +1386,6 @@ thời_gian_sử_dụng
 thời_gian_tính
 thời_điểm
 thục_mạng
-thứ
 thứ_bản
 thứ_đến
 thửa
@@ -1523,6 +1527,9 @@ tất_tần_tật
 tất_tật
 tập_trung
 tắp
+quán
+tui
+mừn
 tắp_lự
 tắp_tắp
 tọt
@@ -1831,12 +1838,10 @@ yêu_cầu
 đầy_phè
 đầy_tuổi
 đặc_biệt
-đặt
 đặt_làm
 đặt_mình
 đặt_mức
 đặt_ra
-đặt_trước
 đặt_để
 đến
 đến_bao_giờ

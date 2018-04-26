@@ -34,7 +34,7 @@
                         </div>
                         <div class="content">
                             <div class="text">TRAINING DATA</div>
-                            <div class="number count-to" data-from="0" data-to="4" data-speed="500" data-fresh-interval="20">4</div>
+                            <div class="number count-to" data-from="0" data-to="4" data-speed="500" data-fresh-interval="20"></div>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                         </div>
                         <div class="content">
                             <div class="text">TEST DATA</div>
-                            <div class="number count-to" data-from="0" data-to="40" data-speed="500" data-fresh-interval="20">40</div>
+                            <div class="number count-to" data-from="0" data-to="40" data-speed="500" data-fresh-interval="20"></div>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                         </div>
                         <div class="content">
                             <div class="text">STOPWORDS</div>
-                            <div class="number count-to" data-from="0" data-to="117" data-speed="1000" data-fresh-interval="20">117</div>
+                            <div class="number count-to" data-from="0" data-to="117" data-speed="1000" data-fresh-interval="20"></div>
                         </div>
                     </div>
                 </div>
