@@ -19,6 +19,16 @@
                                 <a href="{{route('intent.show', $intent->id)}}">{{$intent->name}}</a>
                                 <small>You can only update original text</small>
                             </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="{{route('intent.add.document', $intent->id)}}" class=" waves-effect waves-block">Add new document</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </div>
                         <div class="body">
                             <form method="post" action="{{route('intent.update.document', [$intent->id, $document->id])}}">

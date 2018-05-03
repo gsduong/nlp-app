@@ -86,6 +86,7 @@ class Document extends Model
         $body = $response->getBody()->getContents();
         $json = json_decode($body);
         if ($json->tokensSize > 0) {
+            $old_tokens_document = json_decode($this->attributes['tokens'], true);
             $this->attributes['original_text'] = $original_text;
             $this->attributes['tokenized_text'] = $json->tokenizedText;
             $this->attributes['tokens'] = json_encode($json->tokens);
@@ -94,6 +95,30 @@ class Document extends Model
 
             $this->save();
             // $flag = true;
+            $intent = $this->intent;
+            $tokens_intent = json_decode($intent->bag_of_words, true);
+            if (!$tokens_intent) {
+                $tokens_intent = array();
+            }
+            foreach ($old_tokens_document as $token) {
+                if (array_key_exists($token, $tokens_intent)) {
+                    $tokens_intent[$token]--;
+                    if ($tokens_intent[$token] == 0) {
+                        unset($tokens_intent[$token]);
+                    }
+                }
+            }
+            $tokens_document = json_decode($this->attributes['tokens'], true);
+            foreach ($tokens_document as $token) {
+                if (array_key_exists($token, $tokens_intent)) {
+                    $tokens_intent[$token]++;
+                }
+                else {
+                    $tokens_intent[$token] = 1;
+                }
+            }
+            $intent->update(['bag_of_words' => json_encode($tokens_intent)]);
+            $intent->update(['number_token' => $intent->documents->sum('number_token')]);
             return Document::find($this->attributes['id']);
         }
         return $flag;
