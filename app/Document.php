@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
 
 class Document extends Model
 {
@@ -12,7 +14,7 @@ class Document extends Model
      * @var array
      */
     protected $fillable = [
-        'original_text', 'text', 'intent_id', 'tokenized_text'
+        'original_text', 'text', 'intent_id', 'tokenized_text', 'number_token', 'tokens'
     ];
 
     /**
@@ -24,32 +26,76 @@ class Document extends Model
     }
 
     public function term_count(){
-        $string = $this->text;
-        $words = explode(" ", $string);
-        return count($words);
+        return $this->number_token;
     }
 
-    // public static function addNewDoc($string){
-    //     $tokenized_text = $this->tokenize($string);
-    //     $text = $this->remove_stopwords($tokenized_text);
-    //     if ($text == '') {
-    //         return null;
-    //     }
-    //     $doc = Document::firstOrCreate(['original_text' => $string, 'tokenized_text' => $tokenized_text, 'text' => $text]);
-    //     return $doc;
-    // }
-    // public function remove_number($string){
-    //     $tokens = explode(" ", $string);
-    //     $results = "";
-    //     foreach($tokens as $token) {
-    //         if (ctype_digit($token)) {
-    //             # code...
-    //             // nothing
-    //         }
-    //         else {
-    //             $results = $results . $token . " ";
-    //         }
-    //     }
-    //     return trim($results);
-    // }
+    public static function custom_create($original_text, $intent_id){
+        $flag = null;
+        if (Document::where('original_text', '=', $original_text)->count() > 0) {
+            // duplicate found
+            return $flag;
+        }
+        $client = new Client([
+          'base_uri' => 'https://vntokenizer.herokuapp.com',
+        ]);
+        $payload = json_encode(array("message" => $original_text));
+        $response = $client->post('/message', [
+          'debug' => TRUE,
+          'body' => $payload,
+          'headers' => [
+            'Content-Type' => 'application/json',
+          ]
+        ]);
+        $body = $response->getBody()->getContents();
+        $json = json_decode($body);
+
+        if ($json->tokensSize > 0) {
+            $doc = new Document;
+            $doc->intent_id = $intent_id;
+            $doc->original_text = $original_text;
+            $doc->tokenized_text = $json->tokenizedText;
+            $doc->tokens = json_encode($json->tokens);
+            $doc->number_token = $json->tokensSize;
+            $doc->text = $json->finalText;
+            $doc->save();
+            // $flag = true;
+            return $doc;
+        }
+        return $flag;
+    }
+
+    public function custom_update($original_text) {
+        
+        $flag = null;
+        if (Document::where('original_text', '=', $original_text)->count() > 0) {
+            // a similar document found
+            return $flag;
+        }
+        $client = new Client([
+          'base_uri' => 'https://vntokenizer.herokuapp.com',
+        ]);
+        $payload = json_encode(array("message" => $original_text));
+
+        $response = $client->post('/message', [
+          'debug' => TRUE,
+          'body' => $payload,
+          'headers' => [
+            'Content-Type' => 'application/json',
+          ]
+        ]);
+        $body = $response->getBody()->getContents();
+        $json = json_decode($body);
+        if ($json->tokensSize > 0) {
+            $this->attributes['original_text'] = $original_text;
+            $this->attributes['tokenized_text'] = $json->tokenizedText;
+            $this->attributes['tokens'] = json_encode($json->tokens);
+            $this->attributes['number_token'] = $json->tokensSize;
+            $this->attributes['text'] = $json->finalText;
+
+            $this->save();
+            // $flag = true;
+            return Document::find($this->attributes['id']);
+        }
+        return $flag;
+    }
 }

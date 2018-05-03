@@ -23,5 +23,23 @@ class IntentsTableSeeder extends Seeder
         DB::table('intents')->insert([
             'name' => "online_order"
         ]);
+        DB::table('intents')->insert([
+            'name' => "greeting"
+        ]);
+        DB::table('intents')->insert([
+            'name' => "ask_phone_number"
+        ]);
+        DB::table('intents')->insert([
+            'name' => "goodbye"
+        ]);
+        DB::table('intents')->insert([
+            'name' => "thank_you"
+        ]);
+        DB::table('intents')->insert([
+            'name' => "feedback"
+        ]);
+        DB::table('intents')->insert([
+            'name' => "ask_address"
+        ]);
     }
 }

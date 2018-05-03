@@ -18,6 +18,8 @@ class CreateDocumentsTable extends Migration
             $table->string('original_text', 200);
             $table->string('tokenized_text', 200)->nullable();
             $table->string('text', 200)->nullable();
+            $table->integer('number_token')->nullable();
+            $table->string('tokens')->nullable(); // json_array for array of tokens
             $table->unsignedInteger('intent_id');
             $table->foreign('intent_id')->references('id')->on('intents');
             $table->timestamps();

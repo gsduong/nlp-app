@@ -12,7 +12,7 @@ class Intent extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'name', 'number_token', 'bag_of_words'
     ];
 
     /**

@@ -8,6 +8,16 @@ use App\Intent;
 use App\Document;
 class VocabController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index(){
     	// Delete all and recalculate
     	Vocab::truncate();

@@ -11,12 +11,12 @@
                             <span>Home</span>
                         </a>
                     </li>
-                    <li {{Route::is('stopword.index')? 'class=active':''}}>
+{{--                     <li {{Route::is('stopword.index')? 'class=active':''}}>
                         <a href="{{route('stopword.index')}}">
                             <i class="material-icons">text_fields</i>
                             <span>Stop Words</span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li {{Route::is('intent.index')? 'class=active':''}}>
                         <a href="{{route('intent.index')}}">
                             <i class="material-icons">layers</i>

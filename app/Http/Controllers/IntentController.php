@@ -56,14 +56,9 @@ class IntentController extends Controller
     	$intent = Intent::find($intent_id);
     	if ($intent) {
     		$original_text = trim($request->document);
-            $tokenized_text = $this->tokenize($original_text);
-            $text = $this->remove_stopwords($tokenized_text);
-            $text = $this->remove_number($text);
-            $text = $this->remove_punctuation($text);
-            if ($text == '') {
-                return "String remains nothing after removing stopwords";
-            }
-    		$intent->documents()->firstOrCreate(['original_text' => $request->document, 'tokenized_text' => $tokenized_text, 'text' => $text]);
+            if($doc = Document::custom_create($original_text, $intent_id)){
+                // if new document is created, update intent bag of word and model need to be retrain
+            };
             return redirect('intent/' . $intent_id . '/add');
     	}
     	return "Intent not found";
@@ -75,14 +70,9 @@ class IntentController extends Controller
             $doc = $intent->documents()->find($doc_id);
             if ($doc){
                 $original_text = trim($request->document);
-                $tokenized_text = $this->tokenize($original_text);
-                $text = $this->remove_stopwords($tokenized_text);
-                $text = $this->remove_number($text);
-                $text = $this->remove_punctuation($text);
-                if ($text == '') {
-                    return "String remains nothing after removing stopwords";
-                }
-                $doc->update(['original_text' => $request->document, 'tokenized_text' => $tokenized_text, 'text' => $text]);
+                if($updated_doc = $doc->custom_update($original_text)){
+                    // if document is updated, intent bag of word need to be updated and model need to be retrain
+                };
                 return redirect()->route('intent.edit.document', [$intent_id, $doc_id]);
             }
             return redirect('intent/' . $intent_id);
@@ -101,68 +91,4 @@ class IntentController extends Controller
     	}
     	return redirect('intent/' . $intent_id);
     }
-
-    public function tokenize($string){
-        $string = mb_strtolower($string);
-        $client = new Client([
-          'base_uri' => 'https://pyvi.herokuapp.com',
-        ]);
-        $payload = json_encode(array("text" => $string));
-        $response = $client->post('/vntokenizer', [
-          'debug' => TRUE,
-          'body' => $payload,
-          'headers' => [
-            'Content-Type' => 'application/json',
-          ]
-        ]);
-        $body = $response->getBody()->getContents();
-        $json = json_decode($body);
-        return $json->text;
-    }
-
-    public function remove_stopwords($string){
-        $stop_words = array();
-        if ($file = fopen("uploads/files/stopwords.txt", "r")) {
-            while(!feof($file)) {
-                $line = trim(fgets($file));
-                array_push($stop_words, $line);
-            }
-            fclose($file);
-        }
-        $tokens = explode(" ", $string);
-        $result = "";
-        foreach($tokens as $token){
-            if(!in_array($token, $stop_words)) {
-                $result = $result . $token . " ";
-            }
-        }
-        return trim($result);
-    }
-    public function remove_number($string){
-        $tokens = explode(" ", $string);
-        $results = "";
-        foreach($tokens as $token) {
-            if (ctype_digit($token)) {
-                # code...
-                // nothing
-            }
-            else {
-                $results = $results . $token . " ";
-            }
-        }
-        return trim($results);
-    }
-
-    public function remove_punctuation($string){
-        $punctuations = ["`", "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "+", "{", "}", "|", "\\", ":", ";", "\"", "'", ",", ".", "?", "/"];
-        $tokens = explode(" ", $string);
-        $results = "";
-        foreach($tokens as $token) {
-            if (!in_array($token, $punctuations)) {
-                $results = $results . $token . " ";
-            }
-        }
-        return trim($results);
-    }
-
 }
