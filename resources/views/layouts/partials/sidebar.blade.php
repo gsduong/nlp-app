@@ -11,12 +11,6 @@
                             <span>Home</span>
                         </a>
                     </li>
-{{--                     <li {{Route::is('stopword.index')? 'class=active':''}}>
-                        <a href="{{route('stopword.index')}}">
-                            <i class="material-icons">text_fields</i>
-                            <span>Stop Words</span>
-                        </a>
-                    </li> --}}
                     <li {{Route::is('intent.index')? 'class=active':''}}>
                         <a href="{{route('intent.index')}}">
                             <i class="material-icons">layers</i>
@@ -29,18 +23,18 @@
                             <span>Vocabs</span>
                         </a>
                     </li>
-                    <li {{Route::is('term_intent.index')? 'class=active':''}}>
+{{--                     <li {{Route::is('term_intent.index')? 'class=active':''}}>
                         <a href="{{route('term_intent.index')}}">
                             <i class="material-icons">layers</i>
                             <span>Probabilities Table</span>
                         </a>
-                    </li>
-                    <li {{Route::is('console.index')? 'class=active':''}}>
+                    </li> --}}
+{{--                     <li {{Route::is('console.index')? 'class=active':''}}>
                         <a href="{{route('console.index')}}">
                             <i class="material-icons">layers</i>
                             <span>Testing Console</span>
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
             <!-- #Menu -->

@@ -26,6 +26,7 @@
                                     <th>#</th>
                                     <th>Intent</th>
                                     <th># Samples</th>
+                                    <th>Probability</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -34,6 +35,7 @@
                                         <td>{{$intent->id}}</td>
                                         <td><a href="{{route('intent.show', $intent->id)}}">{{$intent->name}}</a></td>
                                         <td>{{$intent->documents->count()}}</td>
+                                        <td>{{number_format($intent->prob, 3)}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

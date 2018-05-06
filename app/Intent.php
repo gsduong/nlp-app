@@ -12,7 +12,7 @@ class Intent extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'number_token', 'bag_of_words'
+        'name', 'number_token', 'bag_of_words', 'default', 'prob'
     ];
 
     /**
@@ -23,43 +23,10 @@ class Intent extends Model
         return $this->hasMany('App\Document', 'intent_id');
     }
 
-    /**
-     * Get the term_intent for the intent.
-     */
-    public function term_intents()
-    {
-        return $this->hasMany('App\TermIntent', 'intent_id');
-    }
-
-    public function count_total_term(){
-        $documents = $this->documents;
-        $count = 0;
-        foreach ($documents as $document) {
-            $count = $count + $document->term_count();
-        }
-        return $count;
-    }
-
-    public function count_word($word){
-        $documents = $this->documents;
-        $count = 0;
-        foreach ($documents as $document) {
-            $tokens_of_doc = explode(" ", $document->text);
-            foreach ($tokens_of_doc as $token) {
-                if ($token === $word) {
-                    $count = $count + 1;
-                }
-            }
-        }
-        return $count;
-    }
-
-    public function prob_word($word){
-        $vocab_size = Vocab::all()->count();
-        if ($vocab_size == 0) {
-            return 0;
-        }
-        return (float) ($this->count_word($word) + 1) / (float) ($this->count_total_term() + $vocab_size);        
+    public function prob_word($word, $vocab_size){
+        $bow = json_decode($this->bag_of_words, true);
+        $count = array_key_exists($word, $bow) ? $bow[$word] : 0;
+        return (float) ($count + 1) / (float) ($this->number_token + $vocab_size);
     }
 
     public function prob_doc($string){

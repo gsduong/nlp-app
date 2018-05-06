@@ -22,6 +22,7 @@ class IntentController extends Controller
     }
 
     public function index(){
+        $this->updateProb();
     	$intents = Intent::all();
     	return view('intent/index', ['intents' => $intents]);
     }
@@ -57,6 +58,8 @@ class IntentController extends Controller
     	if ($intent) {
     		$original_text = trim($request->document);
             if($doc = Document::custom_create($original_text, $intent_id)){
+                // update the probability of current intent in the whole training documents
+                $this->updateProb();
                 return redirect('intent/' . $intent_id . '/add')->with('success', 'New document successfully added!');
             };
             return redirect('intent/' . $intent_id . '/add')->with('errors', 'New document failed to add! Check for duplication or document content.');
@@ -89,7 +92,15 @@ class IntentController extends Controller
     	$doc = $intent->documents->find($doc_id);
     	if ($doc) {
             $doc->custom_delete();
+            $this->updateProb();
     	}
     	return redirect('intent/' . $intent_id);
+    }
+
+    private function updateProb(){
+        $intents = Intent::all();
+        foreach ($intents as $intent) {
+            $intent->update(['prob' => ((float) $intent->documents->count()) / ((float) Document::all()->count())]);
+        }
     }
 }

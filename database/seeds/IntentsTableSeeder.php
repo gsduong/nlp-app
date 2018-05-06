@@ -21,9 +21,6 @@ class IntentsTableSeeder extends Seeder
             'name' => "booking"
         ]);
         DB::table('intents')->insert([
-            'name' => "online_order"
-        ]);
-        DB::table('intents')->insert([
             'name' => "greeting"
         ]);
         DB::table('intents')->insert([
@@ -36,7 +33,7 @@ class IntentsTableSeeder extends Seeder
             'name' => "thank_you"
         ]);
         DB::table('intents')->insert([
-            'name' => "feedback"
+            'name' => "chat_with_staff"
         ]);
         DB::table('intents')->insert([
             'name' => "ask_address"

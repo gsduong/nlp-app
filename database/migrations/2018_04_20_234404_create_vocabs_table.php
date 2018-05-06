@@ -15,9 +15,8 @@ class CreateVocabsTable extends Migration
     {
         Schema::create('vocabs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('word', 200);
-            $table->integer('freq')->default(1);
-            $table->timestamps();
+            $table->string('vocabs')->nullable();
+            $table->integer('size')->default(0);
         });
     }
 
