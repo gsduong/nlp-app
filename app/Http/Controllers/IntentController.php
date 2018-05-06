@@ -57,24 +57,9 @@ class IntentController extends Controller
     	if ($intent) {
     		$original_text = trim($request->document);
             if($doc = Document::custom_create($original_text, $intent_id)){
-                // if new document is created, update intent bag of word and model need to be retrain
-                $tokens_intent = json_decode($intent->bag_of_words, true);
-                $tokens_document = json_decode($doc->tokens, true);
-                if (!$tokens_intent) {
-                    $tokens_intent = array();
-                }
-                foreach ($tokens_document as $token) {
-                    if (array_key_exists($token, $tokens_intent)) {
-                        $tokens_intent[$token]++;
-                    }
-                    else {
-                        $tokens_intent[$token] = 1;
-                    }
-                }
-                $intent->update(['bag_of_words' => json_encode($tokens_intent)]);
-                $intent->update(['number_token' => $intent->documents->sum('number_token')]);
+                return redirect('intent/' . $intent_id . '/add')->with('success', 'New document successfully added!');
             };
-            return redirect('intent/' . $intent_id . '/add');
+            return redirect('intent/' . $intent_id . '/add')->with('errors', 'New document failed to add! Check for duplication or document content.');
     	}
     	return "Intent not found";
     }
@@ -87,8 +72,9 @@ class IntentController extends Controller
                 $original_text = trim($request->document);
                 if($updated_doc = $doc->custom_update($original_text)){
                     // if document is updated, intent bag of word need to be updated and model need to be retrain
+                    return redirect()->route('intent.edit.document', [$intent_id, $doc_id])->with('success', 'Document successfully updated!');
                 };
-                return redirect()->route('intent.edit.document', [$intent_id, $doc_id]);
+                return redirect()->route('intent.edit.document', [$intent_id, $doc_id])->with('errors', 'Document failed to update! Check for duplication or document content.');
             }
             return redirect('intent/' . $intent_id);
         }
@@ -102,23 +88,7 @@ class IntentController extends Controller
     	}
     	$doc = $intent->documents->find($doc_id);
     	if ($doc) {
-            $tokens_document = json_decode($doc->tokens, true);
-            $intent = $doc->intent;
-            $tokens_intent = json_decode($intent->bag_of_words, true);
-    		$doc->delete();
-            if (!$tokens_intent) {
-                $tokens_intent = array();
-            }
-            foreach ($tokens_document as $token) {
-                if (array_key_exists($token, $tokens_intent)) {
-                    $tokens_intent[$token]--;
-                    if ($tokens_intent[$token] == 0) {
-                        unset($tokens_intent[$token]);
-                    }
-                }
-            }
-            $intent->update(['bag_of_words' => json_encode($tokens_intent)]);
-            $intent->update(['number_token' => $intent->documents->sum('number_token')]);
+            $doc->custom_delete();
     	}
     	return redirect('intent/' . $intent_id);
     }

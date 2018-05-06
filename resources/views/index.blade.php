@@ -29,7 +29,10 @@
     @include('layouts.partials.sidebar')
 
     <section class="content">
-        @yield('content')
+        <div class="container-fluid">
+            @yield('content')
+        </div>
+        
     </section>
 
     @section('script')

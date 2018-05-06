@@ -59,6 +59,24 @@ class Document extends Model
             $doc->text = $json->finalText;
             $doc->save();
             // $flag = true;
+
+            // update intent
+            $intent = $doc->intent;
+            $tokens_intent = json_decode($intent->bag_of_words, true);
+            $tokens_document = json_decode($doc->tokens, true);
+            if (!$tokens_intent) {
+                $tokens_intent = array();
+            }
+            foreach ($tokens_document as $token) {
+                if (array_key_exists($token, $tokens_intent)) {
+                    $tokens_intent[$token]++;
+                }
+                else {
+                    $tokens_intent[$token] = 1;
+                }
+            }
+            $intent->update(['bag_of_words' => json_encode($tokens_intent)]);
+            $intent->update(['number_token' => $intent->documents->sum('number_token')]);
             return $doc;
         }
         return $flag;
@@ -122,5 +140,25 @@ class Document extends Model
             return Document::find($this->attributes['id']);
         }
         return $flag;
+    }
+
+    public function custom_delete(){
+        $tokens_document = json_decode($this->tokens, true);
+        $intent = $this->intent;
+        $tokens_intent = json_decode($intent->bag_of_words, true);
+        $this->delete();
+        if (!$tokens_intent) {
+            $tokens_intent = array();
+        }
+        foreach ($tokens_document as $token) {
+            if (array_key_exists($token, $tokens_intent)) {
+                $tokens_intent[$token]--;
+                if ($tokens_intent[$token] == 0) {
+                    unset($tokens_intent[$token]);
+                }
+            }
+        }
+        $intent->update(['bag_of_words' => json_encode($tokens_intent)]);
+        $intent->update(['number_token' => $intent->documents->sum('number_token')]);
     }
 }

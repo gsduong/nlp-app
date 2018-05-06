@@ -9,7 +9,6 @@
 @endsection
 
 @section('content')
-	<div class="container-fluid">
         <!-- Widgets -->
         <div class="row clearfix">
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -17,8 +16,9 @@
                         <div class="header">
                             <h2>
                                 INPUT
-                                <small>Create new document for <a href="{{route('intent.show', $intent->id)}}">{{$intent->name}}</a></small>
+                                <small>Create new document for <a href="{{route('intent.show', $intent->id)}}">{{$intent->name}}</a> or back to <a href="{{route('intent.index')}}">Intents</a></small>
                             </h2>
+                            @include('layouts.partials.errors')
                         </div>
                         <div class="body">
                             <form method="post" action="{{route('intent.create.document', $intent->id)}}">
@@ -42,7 +42,6 @@
                 </div>
         </div>
         <!-- #END# Widgets -->
-    </div>
 @endsection
 
 @section('extra-script')

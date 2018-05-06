@@ -9,7 +9,6 @@
 @endsection
 
 @section('content')
-	<div class="container-fluid">
         <!-- Widgets -->
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -43,7 +42,6 @@
             </div>
         </div>
         <!-- #END# Widgets -->
-    </div>
 @endsection
 
 @section('extra-script')

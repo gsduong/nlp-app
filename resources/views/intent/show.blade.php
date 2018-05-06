@@ -13,7 +13,6 @@
 @endsection
 
 @section('content')
-	<div class="container-fluid">
         <!-- Widgets -->
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -21,7 +20,7 @@
                     <div class="header">
                         <h2>
                             {{$intent->name}}
-                            <small>Current samples for <a href="{{route('intent.show', $intent->id)}}">{{$intent->name}}</a></small>
+                            <small>Back to <a href="{{route('intent.index')}}">Intents</a></small>
                         </h2>
                         <ul class="header-dropdown m-r--5">
                             <li class="dropdown">
@@ -67,7 +66,6 @@
             </div>
         </div>
         <!-- #END# Widgets -->
-    </div>
 @endsection
 
 @section('extra-script')

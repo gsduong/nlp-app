@@ -9,7 +9,6 @@
 @endsection
 
 @section('content')
-	<div class="container-fluid">
         <!-- Widgets -->
         <div class="row clearfix">
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -19,6 +18,7 @@
                                 <a href="{{route('intent.show', $intent->id)}}">{{$intent->name}}</a>
                                 <small>You can only update original text</small>
                             </h2>
+                            @include('layouts.partials.errors')
                             <ul class="header-dropdown m-r--5">
                                 <li class="dropdown">
                                     <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -55,7 +55,7 @@
                                             <div class="col-lg-3 col-md-10 col-sm-10 col-xs-12">
                                                 <div class="form-group form-float">
                                                     <div class="form-line">
-                                                        <label>Text After Removing Stopwords</label>
+                                                        <label>Final Tokens</label>
                                                         <input type="text" disabled class="form-control" value="{{$document->text}}">
                                                     </div>
                                                 </div>
@@ -74,7 +74,6 @@
                 </div>
         </div>
         <!-- #END# Widgets -->
-    </div>
 @endsection
 
 @section('extra-script')
