@@ -5,30 +5,18 @@
             <div class="menu">
                 <ul class="list">
                     <li class="header">MAIN NAVIGATION</li>
-                    <li {{Route::is('home')? 'class=active':''}}>
-                        <a href="{{route('home')}}">
-                            <i class="material-icons">home</i>
-                            <span>Home</span>
-                        </a>
-                    </li>
                     <li {{Route::is('intent.index')? 'class=active':''}}>
                         <a href="{{route('intent.index')}}">
                             <i class="material-icons">layers</i>
                             <span>Intents</span>
                         </a>
                     </li>
-                    <li {{Route::is('vocab.index')? 'class=active':''}}>
-                        <a href="{{route('vocab.index')}}">
+                    <li {{Route::is('nbmodel.index')? 'class=active':''}}>
+                        <a href="{{route('nbmodel.index')}}">
                             <i class="material-icons">layers</i>
-                            <span>Vocabs</span>
+                            <span>Naive Bayes Model</span>
                         </a>
                     </li>
-{{--                     <li {{Route::is('term_intent.index')? 'class=active':''}}>
-                        <a href="{{route('term_intent.index')}}">
-                            <i class="material-icons">layers</i>
-                            <span>Probabilities Table</span>
-                        </a>
-                    </li> --}}
 {{--                     <li {{Route::is('console.index')? 'class=active':''}}>
                         <a href="{{route('console.index')}}">
                             <i class="material-icons">layers</i>

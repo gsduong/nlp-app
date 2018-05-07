@@ -16,7 +16,7 @@ class CreateIntentsTable extends Migration
         Schema::create('intents', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->string('bag_of_words')->nullable();
+            $table->text('bag_of_words')->nullable();
             $table->integer('number_token')->default(0);
             $table->boolean('default')->default(1);
             $table->float('prob', 3, 2)->default(0);

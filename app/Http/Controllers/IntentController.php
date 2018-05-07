@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use App\Intent;
 use App\Document;
 use App\StopWord;
+use App\Vocab;
 
 class IntentController extends Controller
 {
@@ -59,6 +60,7 @@ class IntentController extends Controller
     		$original_text = trim($request->document);
             if($doc = Document::custom_create($original_text, $intent_id)){
                 // update the probability of current intent in the whole training documents
+                Vocab::truncate();
                 $this->updateProb();
                 return redirect('intent/' . $intent_id . '/add')->with('success', 'New document successfully added!');
             };
@@ -75,6 +77,7 @@ class IntentController extends Controller
                 $original_text = trim($request->document);
                 if($updated_doc = $doc->custom_update($original_text)){
                     // if document is updated, intent bag of word need to be updated and model need to be retrain
+                    Vocab::truncate();
                     return redirect()->route('intent.edit.document', [$intent_id, $doc_id])->with('success', 'Document successfully updated!');
                 };
                 return redirect()->route('intent.edit.document', [$intent_id, $doc_id])->with('errors', 'Document failed to update! Check for duplication or document content.');
@@ -92,6 +95,7 @@ class IntentController extends Controller
     	$doc = $intent->documents->find($doc_id);
     	if ($doc) {
             $doc->custom_delete();
+            Vocab::truncate();
             $this->updateProb();
     	}
     	return redirect('intent/' . $intent_id);

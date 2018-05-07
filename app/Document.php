@@ -161,4 +161,5 @@ class Document extends Model
         $intent->update(['bag_of_words' => json_encode($tokens_intent)]);
         $intent->update(['number_token' => $intent->documents->sum('number_token')]);
     }
+
 }

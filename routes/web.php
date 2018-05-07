@@ -30,8 +30,12 @@ Route::get('/intent/{intent_id}/delete/{doc_id}', 'IntentController@deleteDocume
 Route::get('/intent/{intent_id}/edit/{doc_id}', 'IntentController@showFormEditDocument')->name('intent.edit.document');
 Route::post('/intent/{intent_id}/update/{doc_id}', 'IntentController@updateDocument')->name('intent.update.document');
 Route::get('/test', 'IntentController@test');
-Route::get('/vocabs', 'VocabController@index')->name('vocab.index');
 
 Route::get('/prob', 'TermIntentController@index')->name('term_intent.index');
 Route::get('/console', 'TestingController@index')->name('console.index');
 Route::post('/console', 'TestingController@test')->name('console.test');
+
+
+Route::get('/train', 'NaiveBayesController@train')->name('nbmodel.train');
+Route::get('/nbmodel', 'NaiveBayesController@index')->name('nbmodel.index');
+Route::post('/nbmodel', 'NaiveBayesController@test')->name('nbmodel.test');

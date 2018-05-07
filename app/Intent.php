@@ -29,23 +29,20 @@ class Intent extends Model
         return (float) ($count + 1) / (float) ($this->number_token + $vocab_size);
     }
 
-    public function prob_doc($string){
+    public function prob_new_doc($string, $vocab_size){
         $words = explode(" ", $string);
-        $count_doc = $this->documents->count();
-        $sum_doc = 0;
-        $intents = Intent::all();
-        foreach($intents as $intent) $sum_doc = $sum_doc + $intent->documents->count();
-        $prob_doc = (float) $count_doc / (float) $sum_doc;
-        foreach($words as $word) $prob_doc = $prob_doc * $this->prob_word($word);
+        $prob_doc = $this->prob;
+        foreach ($words as $word) {
+            $prob_doc *= $this->prob_word($word, $vocab_size);
+        }
         return $prob_doc;
     }
 
-    public function percentage($string){
-        $weight = 0;
+    public static function selfUpdateProb(){
         $intents = Intent::all();
-        foreach($intents as $intent){
-            $weight += $intent->prob_doc($string);
+        foreach ($intents as $intent) {
+            $intent->update(['prob' => ((float) $intent->documents->count()) / ((float) Document::all()->count())]);
         }
-        return $this->prob_doc($string) * 100 / $weight;
     }
+
 }

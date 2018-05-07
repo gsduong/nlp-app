@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\NaiveBayesModel;
 use App\Intent;
 use App\Document;
+use App\Vocab;
+use App\Sample;
 class NaiveBayesController extends Controller
 {
     /**
@@ -19,19 +20,26 @@ class NaiveBayesController extends Controller
     }
 
     public function index() {
-
+        // Sample::truncate();
+        $intents = Intent::where('number_token', '>', 0)->get();
+        $sample = Sample::all()->first();
+        // dd($sample);
+        $vocabs = Vocab::orderBy("freq", "desc")->get();
+        return view('naive_bayes/index', ['vocabs' => $vocabs, 'intents' => $intents, 'sample' => $sample]);
     }
 
     public function train() {
-    	NaiveBayesModel::truncate();
-
+    	Vocab::truncate();
+        Sample::truncate();
+        Intent::selfUpdateProb();
     	$intents = Intent::where('number_token', '>', 0)->get();
     	if ($intents->count() == 0) {
-    		return 'Failed to train!';
+    		return 'No training data';
     	}
     	$bag_of_words = array();
-    	$prob_array = array();
-    	$size = Intent::all()->sum('number_token');
+    	$prob_table = array();
+    	$total_word = Intent::all()->sum('number_token');
+        $size = 0;
         foreach ($intents as $intent) {
         	$tokens_intent = json_decode($intent->bag_of_words, true);
         	foreach ($tokens_intent as $key => $value) {
@@ -40,11 +48,37 @@ class NaiveBayesController extends Controller
 	            }
 	            else {
 	                $bag_of_words[$key] = $value;
+                    $size++;
 	            }
-	            $prob_array[$key] = $intent->prob_word($key, $size);
         	}
         }
+        foreach ($bag_of_words as $key => $value){
+            $temp = array();
+            foreach ($intents as $intent) {
+                $temp[$intent->name] = $intent->prob_word($key, $size);
+            }
+            $prob_table[$key] = $temp;
+        }
+        foreach ($bag_of_words as $key => $value) {
+            $vocab = new Vocab;
+            $vocab->word = $key;
+            $vocab->freq = $value;
+            $vocab->prob_table = json_encode($prob_table[$key]);
+            $vocab->save();
+        }
+        return redirect()->route('nbmodel.index')->with('success', 'Training completed!');
+    }
 
-        NaiveBayesModel::create(['bag_of_words' => json_encode($bag_of_words), 'prob_table' => json_encode($prob_table), 'size' => $size]);
+    public function test(Request $request) {
+        Sample::truncate();
+        $original_text = $request->text_to_test;
+        $vocabs = Vocab::all();
+        $intents = Intent::where('number_token', '>', 0)->get();
+        // dd($intents);
+        $sample = Sample::custom_create($original_text, $intents, $vocabs->count());
+        if ($sample->number_token == 0) {
+            return redirect()->route('nbmodel.index')->with('errors', 'Document remains empty after processing!');
+        }
+        return redirect()->route('nbmodel.index')->with('success', $sample->predicted_label);
     }
 }

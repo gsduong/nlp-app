@@ -11,25 +11,6 @@ class Vocab extends Model
      * @var array
      */
     protected $fillable = [
-        'word', 'freq'
+        'word', 'freq', 'prob_table'
     ];
-
-    public static function addWord($string){
-    	$words = Vocab::all();
-    	$flag = 0;
-    	if ($words->count() > 0) {
-    		foreach ($words as $word) {
-    			if ($word->word == $string) {
-    				$word->freq = $word->freq + 1;
-    				$word->save();
-    				$flag = 1;
-    				break;
-    			}
-    		}
-    		if ($flag == 0) Vocab::create(['word' => $string]);
-    	}
-    	else {
-    		Vocab::create(['word' => $string]);
-    	}
-    }
 }
