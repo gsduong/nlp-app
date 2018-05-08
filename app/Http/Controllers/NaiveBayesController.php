@@ -7,6 +7,8 @@ use App\Intent;
 use App\Document;
 use App\Vocab;
 use App\Sample;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
 class NaiveBayesController extends Controller
 {
     /**
@@ -16,7 +18,7 @@ class NaiveBayesController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['api']]);
     }
 
     public function index() {
@@ -80,5 +82,65 @@ class NaiveBayesController extends Controller
             return redirect()->route('nbmodel.index')->with('errors', 'Document remains empty after processing!');
         }
         return redirect()->route('nbmodel.index')->with('success', $sample->predicted_label);
+    }
+
+    public function api(Request $request) {
+        $vocabs = Vocab::all();
+        if ($vocabs->count() == 0) {
+            return response()->json([
+                'messgae' => 'Model not trained!'
+            ], 201);
+        }
+        $original_text = $request->text;
+        $client = new Client([
+          'base_uri' => 'https://vntokenizer.herokuapp.com',
+        ]);
+        $payload = json_encode(array("message" => $original_text));
+
+        $response = $client->post('/message', [
+          'debug' => TRUE,
+          'body' => $payload,
+          'headers' => [
+            'Content-Type' => 'application/json',
+          ]
+        ]);
+        $body = $response->getBody()->getContents();
+        $json = json_decode($body);
+        
+
+        // create score_table
+        $intents = Intent::where('number_token', '>', 0)->get();
+        $score_table = array();
+        $temp_array = array();
+        $total_prob = 0;
+        foreach ($intents as $no => $intent) {
+            $temp_array[$no] = $intent->prob_new_doc($json->finalText, $vocabs->count());
+            $total_prob += $temp_array[$no];
+        }
+        $max_score = 0;
+        foreach ($intents as $no => $intent) {
+            $score_table[$intent->name] = $temp_array[$no] / $total_prob;
+            if ($max_score <= $score_table[$intent->name]) {
+                $max_score = $score_table[$intent->name];
+            }
+        }
+
+        // predicted_label
+        $predicted_label = array_search($max_score, $score_table);
+        $original_text = $original_text;
+        $tokenized_text = $json->tokenizedText;
+        $processed_text = $json->finalText;
+        $number_token = $json->tokensSize;
+        // $score_table = json_encode($score_table);
+        $score = $max_score;
+        return response()->json([
+            'predicted_label' => $predicted_label,
+            'original_text' => $original_text,
+            'tokenized_text' => $tokenized_text,
+            'processed_text' => $processed_text,
+            'number_token' => $number_token,
+            'score' => $score,
+            'score_table' => $score_table
+        ], 201);
     }
 }

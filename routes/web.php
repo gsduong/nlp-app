@@ -18,10 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/stopwords', 'StopWordController@index')->name('stopword.index');
-Route::post('stopwords/upload', 'StopWordController@handleUpload')->name('stopword.upload');
-Route::get('/uploads/files/stopwords.txt', 'StopWordController@download')->name('stopword.download');
-Route::get('/stopwords/show', 'StopWordController@show')->name('stopword.show');
+
 Route::get('/intents', 'IntentController@index')->name('intent.index');
 Route::get('/intent/{id}', 'IntentController@show')->name('intent.show');
 Route::get('/intent/{id}/add/', 'IntentController@showFormAddDocument')->name('intent.add.document');
@@ -30,11 +27,6 @@ Route::get('/intent/{intent_id}/delete/{doc_id}', 'IntentController@deleteDocume
 Route::get('/intent/{intent_id}/edit/{doc_id}', 'IntentController@showFormEditDocument')->name('intent.edit.document');
 Route::post('/intent/{intent_id}/update/{doc_id}', 'IntentController@updateDocument')->name('intent.update.document');
 Route::get('/test', 'IntentController@test');
-
-Route::get('/prob', 'TermIntentController@index')->name('term_intent.index');
-Route::get('/console', 'TestingController@index')->name('console.index');
-Route::post('/console', 'TestingController@test')->name('console.test');
-
 
 Route::get('/train', 'NaiveBayesController@train')->name('nbmodel.train');
 Route::get('/nbmodel', 'NaiveBayesController@index')->name('nbmodel.index');
