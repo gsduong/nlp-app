@@ -14,7 +14,7 @@ class Intent extends Model
     protected $fillable = [
         'name', 'number_token', 'bag_of_words', 'default', 'prob'
     ];
-
+protected $hidden = ['created_at', 'updated_at'];
     /**
      * Get the documents for the intent.
      */

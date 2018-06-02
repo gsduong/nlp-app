@@ -107,4 +107,10 @@ class IntentController extends Controller
             $intent->update(['prob' => ((float) $intent->documents->count()) / ((float) Document::all()->count())]);
         }
     }
+    public function intents(){
+        return response()->json(Intent::all());
+    }
+    public function documents() {
+        return response()->json(Document::all());
+    }
 }

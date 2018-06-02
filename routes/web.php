@@ -31,3 +31,5 @@ Route::get('/test', 'IntentController@test');
 Route::get('/train', 'NaiveBayesController@train')->name('nbmodel.train');
 Route::get('/nbmodel', 'NaiveBayesController@index')->name('nbmodel.index');
 Route::post('/nbmodel', 'NaiveBayesController@test')->name('nbmodel.test');
+Route::get('/intents/all', 'IntentController@intents');
+Route::get('/documents', 'IntentController@documents');

@@ -17,6 +17,8 @@ class Document extends Model
         'original_text', 'text', 'intent_id', 'tokenized_text', 'number_token', 'tokens'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     /**
      * Get the post that owns the comment.
      */
